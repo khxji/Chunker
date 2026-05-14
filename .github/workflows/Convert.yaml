@@ -2,7 +2,7 @@ name: Convert Minecraft World
 
 on:
   workflow_dispatch: 
-
+  push:
 jobs:
   convert:
     runs-on: ubuntu-latest
