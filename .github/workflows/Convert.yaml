@@ -1,9 +1,7 @@
 name: Convert Minecraft World
 
 on:
-  # Allows you to manually trigger the workflow from the Actions tab on your phone
   workflow_dispatch: 
-  push:
 
 jobs:
   convert:
@@ -14,8 +12,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download World from temp.sh
-        # wget bypasses the browser UI and downloads the raw file directly
-        run: wget "https://temp.sh/kDVGz/New_World_2.7z" -O save.7z
+        # curl -L forces the runner to follow redirects to get the actual file
+        run: curl -L "https://temp.sh/kDVGz/New_World_2.7z" -o save.7z
 
       - name: Extract 7z World
         # 'x' extracts with full paths
@@ -24,23 +22,19 @@ jobs:
         run: 7z x save.7z -o./unzipped_save -y
 
       - name: Setup Node Environment
-        # Sets up Node.js for the conversion script to run
         uses: actions/setup-node@v4 
         with:
           node-version: '20'
 
       - name: Install Dependencies
-        # Installs the required packages for the chunker/converter script
         run: npm install 
 
       - name: Run Conversion Tool
-        # IMPORTANT: If your fork uses a different command to start the conversion, change this line!
+        # IMPORTANT: Make sure this command matches what your specific fork requires
         run: node index.js --input ./unzipped_save --output ./converted_save --target 1.20.1
 
       - name: Upload Converted World Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Downgraded-1.20.1-World
-          # Uploads the final converted folder. GitHub Actions will zip it automatically.
           path: ./converted_save
-          
